@@ -10,6 +10,7 @@ import math
 #cd /home/workspace/CarND-Behavioral-Cloning-P3
 samples = []
 
+#process data from csv
 data_path = './Drive_Data/'
 csv_path_filename = data_path + 'driving_log.csv'
 images_path = data_path + 'IMG/'
@@ -47,6 +48,8 @@ import sklearn
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 
+#implement NVidia Deep Neural Network for Autonomous Vehicles
+#Add Dropouts to prevent overfitting
 
 model = Sequential()
 
@@ -93,7 +96,8 @@ def generator(samples, batch_size=32):
                     images.append(image)
                     if index == "center":
                         images.append(cv2.flip(image, 1))
-                        
+                
+                #Corecction of 0.2 for left and right images
                 correction = 0.2
                 angle = float(batch_sample[3])
                 angles.append(angle)
@@ -127,6 +131,7 @@ epochs = 15
 
 history_object = model.fit_generator(train_generator, steps_per_epoch=(len(train_samples)/batch_size), validation_data=validation_generator, validation_steps=(len(validation_samples)/batch_size), epochs=epochs, callbacks=callbacks_list, verbose=1)
 
+#save only best model to help prevent overfitting if validation is not improving
 model.save('model_last_epoch.h5')
 model.load_weights("weights.best.hdf5")
 model.save('model.h5')
