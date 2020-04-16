@@ -1,8 +1,6 @@
 # **Behavioral Cloning** 
 
-## Writeup Template
-
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+## Jayant Sachdev
 
 ---
 
@@ -18,14 +16,18 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
-
+[image1]: ./cnn-architecture-nvidia.png "NVidia CNN Architecture for Autonomous vehicles"
+[image2]: ./Training_Results/Center.png "Center Straight"
+[image3]: ./Training_Results/Left.png "Left Straight"
+[image4]: ./Training_Results/Right.png "Right Straight"
+[image5]: ./Training_Results/Center_Curve.png "Center Straight"
+[image6]: ./Training_Results/Left_Curve.png "Left Straight"
+[image7]: ./Training_Results/Right_Curve.png "Right Straight"
+[image8]: ./Training_Results/Right_Curve.png "Right Straight"
+[image9]: ./Training_Results/Recovery.png "Recovery"
+[image10]: ./Training_Results/Bridge.png "Bridge"
+[image11]: ./Training_Results/Road_Edge.png "Road Edge"
+[image12]: ./Train_Val_errLoss_final.png "Validation and Training Loss"
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
