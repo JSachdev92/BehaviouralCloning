@@ -32,43 +32,43 @@ The goals / steps of this project are the following:
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-### Files Submitted & Code Quality
-
-#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
-
-My project includes the following files:
-* model.py containing the script to create and train the model
-* drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
-
-#### 2. Submission includes functional code
-Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
-```sh
-python drive.py model.h5
-```
-
-#### 3. Submission code is usable and readable
-
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+### Project Summary
+In this project, i utilized deep learning algorithms to train a vehicle to drive autonomously around a racetrack in a simulator. I first collected data in the simulator; then utilized a convolutional neural network (CNN) to learn the images and the associated steering angles. Then used the learned model to drive the vehicle autonomously in the simulator.  
 
 ### Model Architecture and Training Strategy
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+Since the goal of the project was to drive a car autonomously around a track in a simulator, i levereged the CNN architecture designed by NVIDIA for autonomous vehicles. The architecture is explained in detail in this [paper] (https://arxiv.org/pdf/1604.07316v1.pdf) and illustrated below:
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+![alt text][image1]
+
+Using this architecture as a baseline, i first normalized the images using a lambda layer, then cropped the top 60 and the bottom 25 pixels to focus on the key aspects of the image. 
+
+```
+model.add(Lambda(lambda x: x / 127.5 - 1, input_shape=(160,320,3)))
+model.add(Cropping2D(cropping=((60,25),(0,0))))
+```
+
+I also added a dropout layer before the fully connected layers to help prevent overfitting of the model.
+
+```
+model.add(Dropout(0.5, noise_shape=None, seed=None))
+```
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+There were several design decisions taken to reduce overfitting in the model. To begin with, the data was trained and validated on separate data sets. Looking at `model.py` lines 113-122, you can see that i utilized the train_test_split function to split off 20% of the data for validation purposes.  
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+Furthermore, a dropout layer was added just before the 3 fuller connected layers. I experimented with adding a 2nd dropout layer after the first convolutional layer in addition to the dropout layer before the fully connected layers, but found that doing so resulted in underfitting and poor performance. As a result i just utilized the one dropout layer. 
+
+When training the model, i noticed that the validation loss would start to stabalize around 13-15 epochs. As a result i set the model to train for 15 epoch's only. In addition, i saved the parameters for the model with the best validation loss to assist with the overfitting. 
+
+The model validation and training loss was also monitored to ensure that the loss were in the same ballpark and the model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually. As suggested in the project introduction and overview, a Mean Square Error loss function was used. In total, the validation and training loss was observed during the training process, and it was found that the validation loss would start to stabalize at around 13-15 epochs. As such, the final model was trained for 15 epochs. Furthermore, only the model with the lowest validation loss was saved to ensure that the best model is utilized.  
 
 #### 4. Appropriate training data
 
@@ -100,7 +100,7 @@ The final model architecture (model.py lines 18-24) consisted of a convolution n
 
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
-![alt text][image1]
+
 
 #### 3. Creation of the Training Set & Training Process
 
