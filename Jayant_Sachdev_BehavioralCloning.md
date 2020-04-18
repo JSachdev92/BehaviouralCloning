@@ -28,8 +28,6 @@ The goals / steps of this project are the following:
 [image10]: ./Training_Results/Bridge.png "Bridge"
 [image11]: ./Training_Results/Road_Edge.png "Road Edge"
 [image12]: ./Train_Val_errLoss_final.png "Validation and Training Loss"
-## Rubric Points
-### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
 ### Project Summary
@@ -39,7 +37,7 @@ In this project, i utilized deep learning algorithms to train a vehicle to drive
 
 #### 1. An appropriate model architecture has been employed
 
-Since the goal of the project was to drive a car autonomously around a track in a simulator, i levereged the CNN architecture designed by NVIDIA for autonomous vehicles. The architecture is explained in detail in this [paper] (https://arxiv.org/pdf/1604.07316v1.pdf) and illustrated below:
+Since the goal of the project was to drive a car autonomously around a track in a simulator, i levereged the CNN architecture designed by NVIDIA for autonomous vehicles. The architecture is explained in detail in this [paper](https://arxiv.org/pdf/1604.07316v1.pdf) and illustrated below:
 
 ![alt text][image1]
 
@@ -72,35 +70,48 @@ The model used an adam optimizer, so the learning rate was not tuned manually. A
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road and additional data on the bridges and section of road where i noticed the vehicle struggling to stay centered, such as where there was no lane marking on one side. I also made sure that the majority of training data was focused on smooth driving. I noticed if there was too much recovery driving, the baseline performance of the vehicle was low and additional smooth driving data was needed. 
 
 For details about how I created the training data, see the next section. 
 
-### Model Architecture and Training Strategy
 
-#### 1. Solution Design Approach
+#### 5. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+The overall strategy for deriving a model architecture was to utilize an architecture that has been validated for autonomous vehicle applications. It was the reason for selecting the NVIDIA CNN designed specifically for end-to-end learing for self-driving cars.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+I utilized the optional data as a starting point and trained the data for 20 epochs. In order to gain insight into the model i split the data into a training and validation set with 20% of the data being split into validation data. I noticed that the model was starting to overfit after 6-7 epochs, so i added a dropout layer before the fully connected layers.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
+During testing, i noticed that the vehicle veered off track in corners and on the bridge, so i collected more data for recorvery and for driving in unique sections, such as on the bridge, or on the section with lane line on one side. 
 
-To combat the overfitting, I modified the model so that ...
+I still noticed that the training loss kept decreasing while the validation loss stabalized after 10 epochs, so i added another dropout layer after the first convolutional layer. 
 
-Then I ... 
+However, i noticed that the performance kept on degrading rather than improving. After collected multiple sets on new data and training on that, i made a few realizations. firstly, the ratio of data for each situation is important. I had collected too much data focusing on recovering in various scenario's that it dwarfed the normal driving data and the vehicle would behave poorly as a result. In addition, i realized that the 2nd dropout layer was causing underfitting, which was not noticed in the data, but was clearly visible in the simulator as no amount of new data would resolve the performance issues. 
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+As a result, i removed the dropout layer after the first convolutional layer and kept the dropout layer before the fully connected layers. Also, i collected a competely new data set that contained 3 laps of smooth driving out of which 1 lap was recorded going the other way. In addition to the 3 laps, about 30% additional data was recorded doing recovery maneuvers and regular driving in parts of the track that were unique, like the bridge and sections with only one lane line.  
 
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+I noticed that the validation loss and training loss was much lower than the other datasets to begin and there was no indication of overfitting in this model.
+
+At the end of the process, the vehicle was able to drive autonomously around the track without leaving the road.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture `model.py` lines 54-72) consisted of a convolution neural network with the following layers and layer sizes:
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 320x160x3 images   							| 
+| Cropping         	| 2D cropping, 60 pixels from the top and 20 pixels from the bottom | 
+| Convolution 5x5    | 	 2x2 stride, 24 depth, Relu activation |
+| Convolution 5x5    | 	 2x2 stride, 36 depth, Relu activation |
+| Convolution 5x5    | 	 2x2 stride, 48 depth, Relu activation |
+| Convolution 3x3    |   non-strided, 64 depth, Relu activation|
+| Convolution 3x3    |   non-strided, 64 depth, Relu activation|
+| Flatten					|	1164  Outputs	|
+| Dropout		|		
+| Fully connected		| 100 Outputs	|
+| Fully connected		| 50 Outputs	|
+| Fully connected		| 10 Outputs	|
+| Fully connected		|  Steering Angle Output  |
 
 #### 3. Creation of the Training Set & Training Process
 
