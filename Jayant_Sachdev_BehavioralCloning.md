@@ -85,7 +85,7 @@ During testing, i noticed that the vehicle veered off track in corners and on th
 
 I still noticed that the training loss kept decreasing while the validation loss stabalized after 10 epochs, so i added another dropout layer after the first convolutional layer. 
 
-However, i noticed that the performance kept on degrading rather than improving. After collected multiple sets on new data and training on that, i made a few realizations. firstly, the ratio of data for each situation is important. I had collected too much data focusing on recovering in various scenario's that it dwarfed the normal driving data and the vehicle would behave poorly as a result. In addition, i realized that the 2nd dropout layer was causing underfitting, which was not noticed in the data, but was clearly visible in the simulator as no amount of new data would resolve the performance issues. 
+However, i noticed that the performance kept on degrading rather than improving. After collecting multiple sets of new data and training on that, i made a few realizations. firstly, the ratio of data for each situation is important. I had collected too much data focusing on recovering in various scenario's that it dwarfed the normal driving data and the vehicle would behave poorly as a result. In addition, i realized that the 2nd dropout layer was causing underfitting, which was not noticed in the data, but was clearly visible in the simulator as no amount of new data would resolve the performance issues. 
 
 As a result, i removed the dropout layer after the first convolutional layer and kept the dropout layer before the fully connected layers. Also, i collected a competely new data set that contained 3 laps of smooth driving out of which 1 lap was recorded going the other way. In addition to the 3 laps, about 30% additional data was recorded doing recovery maneuvers and regular driving in parts of the track that were unique, like the bridge and sections with only one lane line.  
 
@@ -93,13 +93,14 @@ I noticed that the validation loss and training loss was much lower than the oth
 
 At the end of the process, the vehicle was able to drive autonomously around the track without leaving the road.
 
-#### 2. Final Model Architecture
+#### 6. Final Model Architecture
 
-The final model architecture `model.py` lines 54-72) consisted of a convolution neural network with the following layers and layer sizes:
+The final model architecture, coded in `model.py` lines 54-72, followed the basic structure of NVIDIA CNN illustrated above and consisted of the following layers and layer sizes:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | Input         		| 320x160x3 images   							| 
+| Normalization         	| normalize pixel data to [-1,1] | 
 | Cropping         	| 2D cropping, 60 pixels from the top and 20 pixels from the bottom | 
 | Convolution 5x5    | 	 2x2 stride, 24 depth, Relu activation |
 | Convolution 5x5    | 	 2x2 stride, 36 depth, Relu activation |
@@ -115,24 +116,23 @@ The final model architecture `model.py` lines 54-72) consisted of a convolution 
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
+To capture good driving behavior, I first recorded three laps on track one using smooth center lane driving. Here are some example images of center lane driving:
 
-![alt text][image2]
+| Center Image         		|     Left Image 	        					|  Right Image |
+|:---------------------:|:---------------------------------------------:|:---------------------------------------------:| 
+|![][image2]|![][image3]|![][image4]|
+|![][image5]|![][image6]|![][image7]|
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to recover when getting close to a lane edge. An example of recovery can be seen below:
 
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
+![alt text][image8]
 
-Then I repeated this process on track two in order to get more data points.
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+To augment the data sat, I also flipped images and used the left and right side images with correction factors as this would assist with creation of the data, assist with recovery and normalize the data since it normalizes the number left and the right turn data.
 
-![alt text][image6]
-![alt text][image7]
+Initially, i utilized the provided data set and added additional data to that. I made the realization that in the default dataset, there is a lot of data where there is no steering angle. In addition, i had collected almost triple the default dataset in recovery data. As a result the vehicle model did not have enough smooth driving data to complete the track. 
 
-Etc ....
+I utilized this learning to collect data where i used the mouse input to always have a steering angle during recording, especially during smooth driving data. Also, i limited the recovery and special scenario data to approx 30% of the the total dataset. 
 
 After the collection process, I had X number of data points. I then preprocessed this data by ...
 
