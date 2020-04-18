@@ -23,11 +23,10 @@ The goals / steps of this project are the following:
 [image5]: ./Training_Results/Center_Curve.png "Center Straight"
 [image6]: ./Training_Results/Left_Curve.png "Left Straight"
 [image7]: ./Training_Results/Right_Curve.png "Right Straight"
-[image8]: ./Training_Results/Right_Curve.png "Right Straight"
-[image9]: ./Training_Results/Recovery.png "Recovery"
-[image10]: ./Training_Results/Bridge.png "Bridge"
-[image11]: ./Training_Results/Road_Edge.png "Road Edge"
-[image12]: ./Train_Val_errLoss_final.png "Validation and Training Loss"
+[image8]: ./Training_Results/Recovery.png "Recovery"
+[image9]: ./Training_Results/Bridge.png "Bridge"
+[image10]: ./Training_Results/Road_Edge.png "Road Edge"
+[image11]: ./Train_Val_errLoss_final.png "Validation and Training Loss"
 
 ---
 ### Project Summary
@@ -114,7 +113,7 @@ The final model architecture, coded in `model.py` lines 54-72, followed the basi
 | Fully connected		| 10 Outputs	|
 | Fully connected		|  Steering Angle Output  |
 
-#### 3. Creation of the Training Set & Training Process
+#### 7. Creation of the Training Set & Training Process
 
 To capture good driving behavior, I first recorded three laps on track one using smooth center lane driving. Here are some example images of center lane driving:
 
@@ -127,16 +126,28 @@ I then recorded the vehicle recovering from the left side and right sides of the
 
 ![alt text][image8]
 
+I also took additional data just in the sections with unique features, such as the bridge and the section of road with only one visible lane line. These images can be seen below:
+
+| Bridge       		|     Single Lane Line	        					| 
+|:---------------------:|:---------------------------------------------:|
+|![][image9]|![][image10]|
 
 To augment the data sat, I also flipped images and used the left and right side images with correction factors as this would assist with creation of the data, assist with recovery and normalize the data since it normalizes the number left and the right turn data.
 
-Initially, i utilized the provided data set and added additional data to that. I made the realization that in the default dataset, there is a lot of data where there is no steering angle. In addition, i had collected almost triple the default dataset in recovery data. As a result the vehicle model did not have enough smooth driving data to complete the track. 
+Initially, i utilized the provided optional data set and added to that dataset. I did not get good results with this and recorded my own data based on recommendations made in the project instructions. I eventually made the realization that in the default dataset and the datasets i was creating, there was a lot of data where there was a steering angle of 0 degrees. In addition, i had collected almost triple the smooth center driving in recovery data. As a result the vehicle model did not have enough smooth driving data to complete the track. 
 
-I utilized this learning to collect data where i used the mouse input to always have a steering angle during recording, especially during smooth driving data. Also, i limited the recovery and special scenario data to approx 30% of the the total dataset. 
+I utilized this learning to collect my final dataset where i used the mouse input to always have a steering angle during recording, especially during smooth driving data. Also, i limited the recovery and special scenario data to approx 30% of the the total dataset. 
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+After the collection process, I had 9419 number of data points. I then preprocessed this data by cropping the top and bottom of the images. Flipping the center image and the corresponding steering angle to normalize the left and right curve and bias data and adjusting to the steering angle coming out of the left and right side images with a correction factor of 0.2 radians. This was all achieved in a generator which shuffled the data and managed the computational resources of saving all those images. 
 
+I finally split 20% of the data into a validation set using the train_test_split function. 
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 15 as evidenced by the fact that running for 30 epochs showed convergence of the validation set at around 13-15 epochs. I used an adam optimizer so that manually training the learning rate wasn't necessary. The following validation and test loss graph also shows that the model does not appear to overfit or underfit the data:
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+![alt text][image11]
+
+The model with the lowest validation loss was saved and utilized to predict the steering angles and drive the vehicle autonomously around the race track. The results can be seen in the attached [video](https://github.com/JSachdev92/BehaviouralCloning/blob/master/AutoDrive1.mp4). 
+
+### Conclusions
+
+In conclusion, the vehicle successfully navigated the track based on the trained model. There were a few sections where it got close to exiting in curves, but recovered based on the provided dataset. This can be tackled with more smooth driving data in those cases. One key takeaway in this whole process is the importance of good data and a good distribution of data in the model. I noticed that even with less data, i would get decent performance except a few corner cases, but after a certain point, collecting more data specically to target where the car veers off road would result in degraded performance. Only after i realized that collecting this extra data was skewing the distrubition of data, which in turn was causing an ungeneralized model that would performn poorly, did i correctly strategize and collect a good dataset. Another challenge was that I was using the provided workspace from Udacity and occasional frame rate drops made collected good data a fairly big challenge. Overall i am happy with the performance and results from this project.  
