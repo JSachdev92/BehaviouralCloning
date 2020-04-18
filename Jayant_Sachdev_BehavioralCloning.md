@@ -142,7 +142,7 @@ After the collection process, I had 9419 number of data points. I then preproces
 
 I finally split 20% of the data into a validation set using the train_test_split function. 
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 15 as evidenced by the fact that running for 30 epochs showed convergence of the validation set at around 13-15 epochs. I used an adam optimizer so that manually training the learning rate wasn't necessary. The following validation and test loss graph also shows that the model does not appear to overfit or underfit the data:
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 15 as evidenced by the fact that running for 30 epochs showed convergence of the validation set at around 13-15 epochs. I used an adam optimizer so that manually training the learning rate wasn't necessary. The following validation and test loss graph also shows that the model does not appear to overfit the data:
 
 ![alt text][image11]
 
